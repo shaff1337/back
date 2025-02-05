@@ -25,14 +25,16 @@ const httpsServer = createHttpsServer({
 
 // Middlewares
 app.use(morgan);
-app.use(helmet());
+app.use(helmet({
+    crossOriginResourcePolicy: false, // Disable Helmet's CORS policy
+}));
+
 app.use(cors({
     origin: '*',
     methods: ['GET', 'POST']
 }));
 app.use(express.json());
 app.use(ratelimit.global);
-app.use('*', cors()); // Allow preflight requests
 
 app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*"); // Allow all origins
@@ -46,13 +48,6 @@ app.use((req, res, next) => {
 
     next();
 });
-
-
-
-// Routes
-app.use('/v1', routes);
-
-
 
 // Handlers
 app.use(errorHandler.notFound);
