@@ -32,7 +32,7 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(ratelimit.global);
-app.options('*', cors()); // Allow preflight requests
+app.use('*', cors()); // Allow preflight requests
 
 // Routes
 app.use('/v1', routes);
