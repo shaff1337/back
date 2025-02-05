@@ -1,0 +1,257 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int       @id @default(autoincrement())
+  username      String    @unique
+  password      String  
+  email         String    @unique
+  avatar        String    @unique
+  role          Role      @default(USER)
+  isVerified    Boolean   @default(false)
+  subscription  DateTime? @db.Date 
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relation fields
+  //
+  hwid    Hwid?
+  //
+  bans    Ban[]    @relation("BanAuthor")
+  banned  Ban?     @relation("BanUser")
+  //
+  invites Invite[] @relation("InviteAuthor")
+  invited Invite?  @relation("InvitedUser")
+  //
+  announcements Announcement[] @relation("AnnouncementAuthor")
+  //
+  shouts Shout[]  @relation("ShoutAuthor")
+  //
+  configs Config[] @relation("ConfigAuthor")
+  //
+  subscribes Subscribe[] @relation("ConfigUser")
+  //
+  comments Comment[] @relation("CommentAuthor")
+  commented Comment[] @relation("CommentedUser")
+  //
+  ticket Ticket[] @relation("TicketAuthor")
+  ticketMessages TicketMessage[] @relation("TicketMessageAuthor")
+  eventLogs EventLog[] @relation("UserEventLogs")
+}
+
+model EventLog {
+  id        Int      @id @default(autoincrement())
+  route     String
+  ip        String
+  timestamp DateTime @default(now())
+
+  // Relation fields
+  userId    Int
+  user      User     @relation("UserEventLogs", fields: [userId], references: [id])
+}
+
+model Hwid {
+  id        String   @id @default(uuid())
+  hwid      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relation fields
+  author     User   @relation(fields: [authorUser], references: [username])
+  authorUser String @unique
+}
+
+model Ban {
+  id        String   @id @default(uuid())
+  reason    String   @default("Unspecified")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relation fields
+  author     User   @relation("BanAuthor", fields: [authorUser], references: [username])
+  authorUser String
+
+  banned     User   @relation("BanUser", fields: [bannedUser], references: [username])
+  bannedUser String @unique
+}
+
+model Invite {
+  id        String   @id @default(uuid())
+  code      String   @unique
+  createdAt DateTime @default(now())
+
+  // Relation fields
+  author     User @relation("InviteAuthor", fields: [authorUser], references: [username])
+  authorUser String
+
+  invited     User? @relation("InvitedUser", fields: [invitedUser], references: [username])
+  invitedUser String?  @unique
+}
+
+model Announcement {
+  id        String   @id @default(uuid())
+  title     String   @db.Text
+  text      String   @db.Text
+  createdAt DateTime @default(now())
+
+  // Relation fields
+  author     User @relation("AnnouncementAuthor", fields: [authorUser], references: [username])
+  authorUser String
+  
+  type     Type   @relation("AnnouncementType", fields: [typeName, typeColor], references: [text, color])
+  typeName String // relation scalar field (used in the `@relation` attribute above)
+  typeColor  String // relation scalar field (used in the `@relation` attribute above)
+}
+
+model Type {
+  id        String  @id @default(uuid())
+  text      String  @unique
+  color     String  @unique
+  createdAt DateTime @default(now())
+
+  announcement Announcement[] @relation("AnnouncementType")
+
+  @@unique([text, color])
+}
+
+model Faq {
+  id        String @id @default(uuid())
+  question  String @unique
+  answer    String @unique
+  createdAt DateTime @default(now())
+
+  faqGroup  Group @relation("FaqGroup", fields: [group], references: [name])
+  group     String
+}
+
+model Group {
+  id        String @id @default(uuid())
+  name      String @unique
+  createdAt DateTime @default(now())
+
+  faq Faq[] @relation("FaqGroup")
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  comment   String   @db.Text
+  createdAt DateTime @default(now())
+
+  // Relation fields
+  author     User @relation("CommentAuthor", fields: [authorUser], references: [username])
+  authorUser String
+
+  commented     User @relation("CommentedUser", fields: [commentedUser], references: [username])
+  commentedUser String
+}
+
+model Shout {
+  id        String   @id @default(uuid())
+  message   String   @db.Text
+  createdAt DateTime @default(now())
+
+  // Relation fields
+  author     User @relation("ShoutAuthor", fields: [authorUser], references: [username])
+  authorUser String
+}
+
+model Cheat {
+  id    Int       @id @default(autoincrement())
+  game  String    @unique
+  version String
+  status Status @default(Undetected)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Config {
+  id    String   @id @default(uuid())
+  name  String
+  type  ConfigType @default(CONFIG)
+  status ConfigStatus @default(PUBLIC)
+  data  String   @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relation fields
+  author     User @relation("ConfigAuthor", fields: [authorUser], references: [username])
+  authorUser String
+
+  config     Subscribe[] @relation("SubscribedConfig")
+}
+
+model Subscribe {
+  id         String   @id @default(uuid())
+
+  createdAt  DateTime @default(now())
+
+  // Relation fields
+  configUser User @relation("ConfigUser", fields: [user], references: [username])
+  user       String
+  config     Config @relation("SubscribedConfig", fields: [configId], references: [id])
+  configId   String
+}
+
+model Panel {
+  id         String  @id @default(uuid())
+  invites    Boolean @default(true)
+}
+
+model Ticket {
+  id         Int @id @default(autoincrement())
+  topic      String
+  status     TicketStatus @default(Open)
+  createdAt  DateTime @default(now())
+
+  // Relation fields
+  author     User @relation("TicketAuthor", fields: [authorUser], references: [username])
+  authorUser String
+  ticketMessages TicketMessage[] @relation("TicketMessage")
+}
+
+model TicketMessage {
+  id         String @id @default(uuid())
+  message    String
+  
+  // Relation fields
+  author     User @relation("TicketMessageAuthor", fields: [authorUser], references: [username])
+  authorUser String 
+  ticket     Ticket @relation("TicketMessage", fields: [ticketId], references: [id])
+  ticketId   Int
+}
+
+enum Role {
+  USER
+  BETA
+  ADMIN
+}
+
+enum ConfigType {
+  CONFIG
+  SCRIPT
+}
+
+enum ConfigStatus {
+  PUBLIC
+  PRIVATE
+}
+
+enum Status {
+  Undetected
+  Detected
+  Updating
+  Offline
+}
+
+enum TicketStatus {
+  Open
+  Closed
+}

@@ -1,0 +1,56 @@
+{
+	"notFound": {
+		"user": "User not found.",
+		"id": "Id not found.",
+		"inviteCode": "Invite code not found."
+	},
+	"conflict": {
+		"idTaken": "User already exists.",
+		"usernameTaken": "Username is already in use.",
+		"emailTaken": "Email is already in use.",
+		"hwidTaken": "HWID already exists.",
+		"alreadySubscribed": "Already subscribed to this config.",
+		"creatorOfConfig": "You cannot unsubscribe from your own config.",
+		"userBanned": "User is banned."
+	},
+	"invalid": {
+		"currentPassword": "Incorrect current password."
+	},
+	"success": {
+		"createBan": "Banned.",
+		"createAnnouncement": "Announcement created.",
+		"createComment": "Created comment.",
+		"createType": "Type created.",
+		"createFAQ": "FAQ created.",
+		"createInvites": "Invites created.",
+		"createShout": "Shout created.",
+		"createGroup": "Group created.",
+		"createCheat": "Cheat created.",
+		"createConfig": "Config created.",
+		"createSubscription": "Subscribed.",
+		"createTicketMessage": "Sent message successfully.",
+		"deleteBan": "Unbanned.",
+		"deleteHwid": "HWID reset.",
+		"deleteAnnouncement": "Announcement deleted.",
+		"deleteType": "Type deleted.",
+		"deleteComment": "Comment deleted.",
+		"deleteFAQ": "FAQ deleted.",
+		"deleteShout": "Shout deleted.",
+		"deleteShouts": "Shouts deleted.",
+		"deleteGroup": "Group deleted.",
+		"deleteCheat": "Cheat deleted.",
+		"deleteConfig": "Config deleted.",
+		"deleteSubscription": "Unsubscribed.",
+		"setPassword": "Password updated.",
+		"setEmail": "Email updated.",
+		"setRole": "Role updated.",
+		"setVerified": "Verification updated.",
+		"editType": "Type edited.",
+		"editFAQ": "FAQ edited.",
+		"editGroup": "Group edited.",
+		"editCheat": "Cheat edited.",
+		"editConfig": "Config edited.",
+		"editPanel": "Panel edited.",
+		"extendSubscription": "Subscription extended."
+	}
+}
