@@ -27,15 +27,17 @@ const httpsServer = createHttpsServer({
 app.use(morgan);
 app.use(helmet());
 app.use(cors({
-    origin: 'https://front-sigma-nine.vercel.app', // Allow only this origin
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed methods
-    credentials: true // If you need to include credentials (like cookies)
+    origin: '*',
+    methods: ['GET', 'POST']
 }));
 app.use(express.json());
 app.use(ratelimit.global);
+app.options('*', cors()); // Allow preflight requests
 
 // Routes
 app.use('/v1', routes);
+
+
 
 // Handlers
 app.use(errorHandler.notFound);
