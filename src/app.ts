@@ -31,7 +31,7 @@ app.use(helmet({
 
 app.use(cors({
     origin: '*',
-    methods: ['GET', 'POST']
+    methods: ['GET', 'OPTIONS', 'POST']
 }));
 app.use(express.json());
 app.use(ratelimit.global);
